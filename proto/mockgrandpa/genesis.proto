@@ -1,0 +1,11 @@
+syntax = "proto3";
+package octopusnetwork.mockgrandpa.mockgrandpa;
+
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/octopus-network/mock-grandpa/x/mockgrandpa/types";
+
+// GenesisState defines the mockgrandpa module's genesis state.
+message GenesisState {
+    // this line is used by starport scaffolding # genesis/proto/state
+}
