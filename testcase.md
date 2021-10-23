@@ -248,8 +248,6 @@ earth --node tcp://localhost:26657 query bank balances $(earth --home .earth key
 exit
 ```
 
-
-
 ### Query balance - Bob
 
 ```
