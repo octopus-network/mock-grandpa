@@ -1,0 +1,38 @@
+accounts:
+  - name: bob
+    coins: ["20000atom", "200000000stake"]
+    address: "cosmos1tuetpg9n9t8uhrzqgzvsmd5pylktylxjyhfhgz"
+  - name: mars-validator
+    coins: ["10000atom", "100000000stake"]
+
+validator:
+  name: mars-validator
+  staked: "100000000stake"
+client:
+  openapi:
+    path: "docs/static/openapi.yml"
+  vuex:
+    path: "vue/src/store"
+faucet:
+  name: mars-validator
+  coins: ["5atom", "100000stake"]
+  port: 4600
+
+build:
+  binary: mars
+
+genesis:
+  chain_id: "mars"
+
+init:
+  home: "./.mars"
+
+host:
+  rpc: "0.0.0.0:26658"
+  api: "0.0.0.0:1318"
+  grpc: "0.0.0.0:9097"
+  grpc-web: "0.0.0.0:9098"
+  dev-ui: "0.0.0.0:12346"
+  p2p: "0.0.0.0:26670"
+  prof: "0.0.0.0:6061"
+  frontend: "0.0.0.0:8081"

@@ -1,5 +1,7 @@
-# mockgrandpa
-**mockgrandpa** is a blockchain built using Cosmos SDK and Tendermint and created with [Starport](https://github.com/tendermint/starport).
+# mockg-randpa
+**mock-grandpa** is a blockchain built using Cosmos SDK and Tendermint and created with [Starport](https://github.com/tendermint/starport).
+
+This project is  used to test IBC-go with mock grandpa.
 
 ## Get started
 
