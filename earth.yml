@@ -2,6 +2,8 @@ accounts:
   - name: alice
     coins: ["20000atom", "200000000stake"]
     address: "cosmos1xh2jvz9ecty8qdctlgscmys2dr5gz729k0l7x4"
+    mnemoic": "picture switch picture soap flip dawn nerve easy rebuild company hawk stand menu rhythm unfold engine rug rally weapon raccoon glide mosquito lion dog"
+
   - name: earth-validator
     coins: ["10000atom", "100000000stake"]
 validator:

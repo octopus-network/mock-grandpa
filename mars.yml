@@ -2,6 +2,7 @@ accounts:
   - name: bob
     coins: ["20000atom", "200000000stake"]
     address: "cosmos1tuetpg9n9t8uhrzqgzvsmd5pylktylxjyhfhgz"
+    mnemonic: "gaze clay walk tail shove sphere follow twenty agent basket viable gun popular decide vanish coyote guilt carry toward exhaust hour six scout chest"
   - name: mars-validator
     coins: ["10000atom", "100000000stake"]
 
