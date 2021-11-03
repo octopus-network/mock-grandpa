@@ -6,3 +6,5 @@ release/
 .starprot
 vue/src/store/generated
 *.log
+*.pyc
+*.pyo
