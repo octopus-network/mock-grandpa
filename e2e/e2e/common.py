@@ -32,12 +32,14 @@ ChainId = NewType('ChainId', str)
 ClientId = NewType('ClientId', str)
 ChannelId = NewType('ChannelId', str)
 ConnectionId = NewType('ConnectionId', str)
+KeyName = NewType('KeyName', str)
 
 Hex = NewType('Hex', str)
 Sequence = NewType('Sequence', str)
 Timestamp = NewType('Timestamp', int)
 ClientType = NewType('ClientType', str)
 BlockHeight = NewType('BlockHeight', str)
+
 
 def split():
     sleep(0.5)

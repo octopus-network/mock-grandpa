@@ -51,6 +51,7 @@ class TxUpdateClient(Cmd[ClientUpdated]):
 
 # -----------------------------------------------------------------------------
 
+
 @dataclass
 class AllowUpdate:
     after_expiry: bool
@@ -62,12 +63,13 @@ class ClientState:
     chain_id: ChainId
     frozen_height: Height
     latest_height: Height
-    max_clock_drift: Duration
-    trust_level: TrustLevel
-    trusting_period: Duration
-    unbonding_period: Duration
-    upgrade_path: List[str]
-    allow_update: AllowUpdate
+    type: str
+    # max_clock_drift: Duration
+    # trust_level: TrustLevel
+    # trusting_period: Duration
+    # unbonding_period: Duration
+    # upgrade_path: List[str]
+    # allow_update: AllowUpdate
 
 
 @dataclass
@@ -93,6 +95,7 @@ class QueryClientState(Cmd[ClientState]):
     def process(self, result: Any) -> ClientState:
         return from_dict(ClientState, result)
 
+
 # =============================================================================
 # CLIENT creation and manipulation
 # =============================================================================
@@ -101,26 +104,28 @@ class QueryClientState(Cmd[ClientState]):
 def create_client(c: Config, dst: ChainId, src: ChainId) -> ClientCreated:
     cmd = TxCreateClient(dst_chain_id=dst, src_chain_id=src)
     client = cmd.run(c).success()
-    l.info(f'Created client: {client.client_id}')
+    # l.info(f'Created client: {client.client_id}')
     return client
 
 
-def update_client(c: Config, dst: ChainId, client_id: ClientId) -> ClientUpdated:
-    cmd = TxUpdateClient(dst_chain_id=dst,
-                         dst_client_id=client_id)
+def update_client(c: Config, dst: ChainId,
+                  client_id: ClientId) -> ClientUpdated:
+    cmd = TxUpdateClient(dst_chain_id=dst, dst_client_id=client_id)
     res = cmd.run(c).success()
-    l.info(f'Updated client to: {res.consensus_height}')
+    # l.info(f'Updated client to: {res.consensus_height}')
     return res
 
 
-def query_client_state(c: Config, chain_id: ChainId, client_id: ClientId) -> Tuple[ClientId, ClientState]:
+def query_client_state(c: Config, chain_id: ChainId,
+                       client_id: ClientId) -> Tuple[ClientId, ClientState]:
     cmd = QueryClientState(chain_id, client_id)
     res = cmd.run(c).success()
-    l.debug(f'State of client {client_id} is: {res}')
+    # l.debug(f'State of client {client_id} is: {res}')
     return client_id, res
 
 
-def create_update_query_client(c: Config, dst: ChainId, src: ChainId) -> ClientId:
+def create_update_query_client(c: Config, dst: ChainId,
+                               src: ChainId) -> ClientId:
     client = create_client(c, dst, src)
     split()
     query_client_state(c, dst, client.client_id)

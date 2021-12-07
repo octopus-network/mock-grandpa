@@ -1,4 +1,6 @@
 from typing import Optional
+import toml
+import json
 
 from .cmd import *
 from .common import *
@@ -42,8 +44,10 @@ class TxPacketSend(Cmd[TxPacketSendRes]):
             self.src_port,
             self.src_channel,
             str(self.amount),
-            "-o", str(self.height_offset),
-            "-d", self.demo,
+            "-o",
+            str(self.height_offset),
+            "-d",
+            self.demo,
         ]
 
         if self.number_msgs != None:
@@ -58,14 +62,13 @@ class TxPacketSend(Cmd[TxPacketSendRes]):
         entry = find_entry(result, 'SendPacket')
         return from_dict(TxPacketSendRes, entry)
 
+
 # -----------------------------------------------------------------------------
-
-
 @dataclass
 class TxPacketRecvRes:
     height: BlockHeight
     packet: Packet
-    ack: Hex
+    # ack: Hex
 
 
 @cmd("tx raw packet-recv")
@@ -77,11 +80,19 @@ class TxPacketRecv(Cmd[TxPacketRecvRes]):
     src_channel: ChannelId
 
     def args(self) -> List[str]:
-        return [self.dst_chain_id, self.src_chain_id, self.src_port, self.src_channel]
+        return [
+            self.dst_chain_id, self.src_chain_id, self.src_port,
+            self.src_channel
+        ]
 
     def process(self, result: Any) -> TxPacketRecvRes:
-        entry = find_entry(result, 'WriteAcknowledgement')
+        # entry = find_entry(result, 'WriteAcknowledgement')
+        entry = find_entry(result, 'ReceivePacket')
+        if entry is None:
+            return TxPacketRecvRes(None, None)
+
         return from_dict(TxPacketRecvRes, entry)
+
 
 # -----------------------------------------------------------------------------
 
@@ -101,10 +112,19 @@ class TxPacketTimeout(Cmd[TxPacketTimeoutRes]):
     src_channel: ChannelId
 
     def args(self) -> List[str]:
-        return [self.dst_chain_id, self.src_chain_id, self.src_port, self.src_channel]
+        return [
+            self.dst_chain_id, self.src_chain_id, self.src_port,
+            self.src_channel
+        ]
 
     def process(self, result: Any) -> TxPacketTimeoutRes:
+        if result is None or len(result) == 0:
+            return TxPacketTimeoutRes(None, None)
+
         entry = find_entry(result, 'TimeoutPacket')
+        # entry = find_entry(result, 'ReceivePacket')
+        if entry is None:
+            return TxPacketTimeoutRes(None, None)
         return from_dict(TxPacketTimeoutRes, entry)
 
 
@@ -126,14 +146,22 @@ class TxPacketAck(Cmd[TxPacketAckRes]):
     src_channel: ChannelId
 
     def args(self) -> List[str]:
-        return [self.dst_chain_id, self.src_chain_id, self.src_port, self.src_channel]
+        return [
+            self.dst_chain_id, self.src_chain_id, self.src_port,
+            self.src_channel
+        ]
 
     def process(self, result: Any) -> TxPacketAckRes:
+        # entry = find_entry(result, 'AcknowledgePacket')
+        # return from_dict(TxPacketAckRes, entry)
         entry = find_entry(result, 'AcknowledgePacket')
+        if entry is None:
+            return TxPacketAckRes(None, None)
         return from_dict(TxPacketAckRes, entry)
 
 
 # -----------------------------------------------------------------------------
+
 
 @cmd("query packet unreceived-packets")
 @dataclass
@@ -155,10 +183,10 @@ def query_unreceived_packets(
     port: PortId,
     channel: ChannelId,
 ) -> List[int]:
-    cmd = QueryUnreceivedPackets(
-        chain=chain, port=port, channel=channel)
+    cmd = QueryUnreceivedPackets(chain=chain, port=port, channel=channel)
 
     return cmd.run(c).success()
+
 
 # -----------------------------------------------------------------------------
 
@@ -183,8 +211,7 @@ def query_unreceived_acks(
     port: PortId,
     channel: ChannelId,
 ) -> List[int]:
-    cmd = QueryUnreceivedAcks(
-        chain=chain, port=port, channel=channel)
+    cmd = QueryUnreceivedAcks(chain=chain, port=port, channel=channel)
 
     return cmd.run(c).success()
 
@@ -193,133 +220,184 @@ def query_unreceived_acks(
 # =============================================================================
 
 
-def packet_send(c: Config, src: ChainId, dst: ChainId,
-                src_port: PortId, src_channel: ChannelId,
-                amount: int, height_offset: int, number_msgs: Optional[int] = None,
+def packet_send(c: Config,
+                src: ChainId,
+                dst: ChainId,
+                src_port: PortId,
+                src_channel: ChannelId,
+                amount: int,
+                height_offset: int,
+                number_msgs: Optional[int] = None,
                 key: Optional[str] = 'alice') -> Packet:
 
-    cmd = TxPacketSend(dst_chain_id=dst, src_chain_id=src,
-                       src_port=src_port, src_channel=src_channel,
+    cmd = TxPacketSend(dst_chain_id=dst,
+                       src_chain_id=src,
+                       src_port=src_port,
+                       src_channel=src_channel,
                        amount=amount,
                        number_msgs=number_msgs,
                        height_offset=height_offset,
                        key=key)
 
     res = cmd.run(c).success()
-    l.info(
-        f'PacketSend to {src} and obtained sequence number {res.packet.sequence}')
+    # l.info(
+    #     f'PacketSend to {src} and obtained sequence number {res.packet.sequence}'
+    # )
 
     return res.packet
 
 
-def packet_recv(c: Config, dst: ChainId, src: ChainId, src_port: PortId, src_channel: ChannelId) -> Packet:
-    cmd = TxPacketRecv(dst_chain_id=dst, src_chain_id=src,
-                       src_port=src_port, src_channel=src_channel)
+def packet_recv(c: Config, dst: ChainId, src: ChainId, src_port: PortId,
+                src_channel: ChannelId) -> Packet:
+    cmd = TxPacketRecv(dst_chain_id=dst,
+                       src_chain_id=src,
+                       src_port=src_port,
+                       src_channel=src_channel)
 
     res = cmd.run(c).success()
-    l.info(
-        f'PacketRecv to {dst} done for sequence number {res.packet.sequence}')
+    # l.info(
+    #     f'PacketRecv to {dst} done for sequence number {res.packet.sequence}')
+    return res.packet
+
+
+def packet_timeout(c: Config, dst: ChainId, src: ChainId, src_port: PortId,
+                   src_channel: ChannelId) -> Packet:
+    cmd = TxPacketTimeout(dst_chain_id=dst,
+                          src_chain_id=src,
+                          src_port=src_port,
+                          src_channel=src_channel)
+
+    res = cmd.run(c).success()
+    # l.info(f'Timeout to {src} done for sequence number {res.packet.sequence}')
 
     return res.packet
 
 
-def packet_timeout(c: Config, dst: ChainId, src: ChainId, src_port: PortId, src_channel: ChannelId) -> Packet:
-    cmd = TxPacketTimeout(dst_chain_id=dst, src_chain_id=src,
-                          src_port=src_port, src_channel=src_channel)
+def packet_ack(c: Config, dst: ChainId, src: ChainId, src_port: PortId,
+               src_channel: ChannelId) -> Packet:
+    cmd = TxPacketAck(dst_chain_id=dst,
+                      src_chain_id=src,
+                      src_port=src_port,
+                      src_channel=src_channel)
 
     res = cmd.run(c).success()
-    l.info(
-        f'Timeout to {src} done for sequence number {res.packet.sequence}')
-
-    return res.packet
-
-
-def packet_ack(c: Config, dst: ChainId, src: ChainId, src_port: PortId, src_channel: ChannelId) -> Packet:
-    cmd = TxPacketAck(dst_chain_id=dst, src_chain_id=src,
-                      src_port=src_port, src_channel=src_channel)
-
-    res = cmd.run(c).success()
-    l.info(
-        f'PacketAck to {dst} done for sequence number {res.packet.sequence}')
+    # l.info(f'PacketAck to {dst} done for sequence number {res.packet.sequence}')
 
     return res.packet
 
 
 def ping_pong(c: Config,
-              side_a: ChainId, side_b: ChainId,
-              a_chan: ChannelId, b_chan: ChannelId,
+              side_a: ChainId,
+              side_b: ChainId,
+              a_chan: ChannelId,
+              b_chan: ChannelId,
               port_id: PortId = PortId('transfer')):
-
-    pkt_send_a = packet_send(c, side_a, side_b, port_id,
-                             a_chan, amount=9999, height_offset=1000,key='alice')
+    chains = toml.load(c.config_file)['chains']
+    key0 = chains[0]['key_name']
+    pkt_send_a = packet_send(c,
+                             side_a,
+                             side_b,
+                             port_id,
+                             a_chan,
+                             amount=9999,
+                             height_offset=1000,
+                             key=key0)
 
     split()
 
     pkt_recv_b = packet_recv(c, side_b, side_a, port_id, a_chan)
-
-    if pkt_send_a.sequence != pkt_recv_b.sequence:
-        l.error(
-            f'Mismatched sequence numbers for path {side_a} -> {side_b} : Sent={pkt_send_a.sequence} versus Received={pkt_recv_b.sequence}')
+    if pkt_recv_b is not None:
+        if pkt_send_a.sequence != pkt_recv_b.sequence:
+            l.error(
+                f'Mismatched sequence numbers for path {side_a} -> {side_b} : Sent={pkt_send_a.sequence} versus Received={pkt_recv_b.sequence}'
+            )
 
     split()
 
     # write the ack
     pkt_ack_a = packet_ack(c, side_a, side_b, port_id, b_chan)
-
-    if pkt_recv_b.sequence != pkt_ack_a.sequence:
-        l.error(
-            f'Mismatched sequence numbers for ack on path {side_a} -> {side_b} : Recv={pkt_recv_b.sequence} versus Ack={pkt_ack_a.sequence}')
+    if pkt_ack_a is not None:
+        if pkt_recv_b.sequence != pkt_ack_a.sequence:
+            l.error(
+                f'Mismatched sequence numbers for ack on path {side_a} -> {side_b} : Recv={pkt_recv_b.sequence} versus Ack={pkt_ack_a.sequence}'
+            )
 
     split()
 
-    pkt_send_b = packet_send(c, side_b, side_a, port_id,
-                             b_chan, amount=9999, height_offset=1000,key='bob')
+    key1 = chains[1]['key_name']
+    pkt_send_b = packet_send(c,
+                             side_b,
+                             side_a,
+                             port_id,
+                             b_chan,
+                             amount=9999,
+                             height_offset=1000,
+                             key=key1)
 
     split()
 
     pkt_recv_a = packet_recv(c, side_a, side_b, port_id, b_chan)
-
-    if pkt_send_b.sequence != pkt_recv_a.sequence:
-        l.error(
-            f'Mismatched sequence numbers for path {side_b} -> {side_a} : Sent={pkt_send_b.sequence} versus Received={pkt_recv_a.sequence}')
+    if pkt_ack_a is not None:
+        if pkt_send_b.sequence != pkt_recv_a.sequence:
+            l.error(
+                f'Mismatched sequence numbers for path {side_b} -> {side_a} : Sent={pkt_send_b.sequence} versus Received={pkt_recv_a.sequence}'
+            )
 
     split()
 
     pkt_ack_b = packet_ack(c, side_b, side_a, port_id, a_chan)
-
-    if pkt_recv_a.sequence != pkt_ack_b.sequence:
-        l.error(
-            f'Mismatched sequence numbers for ack on path {side_a} -> {side_b} : Recv={pkt_recv_a.sequence} versus Ack={pkt_ack_b.sequence}')
+    if pkt_ack_b is not None:
+        if pkt_recv_a.sequence != pkt_ack_b.sequence:
+            l.error(
+                f'Mismatched sequence numbers for ack on path {side_a} -> {side_b} : Recv={pkt_recv_a.sequence} versus Ack={pkt_ack_b.sequence}'
+            )
 
 
 def timeout(c: Config,
-            side_a: ChainId, side_b: ChainId,
-            a_chan: ChannelId, b_chan: ChannelId,
+            side_a: ChainId,
+            side_b: ChainId,
+            a_chan: ChannelId,
+            b_chan: ChannelId,
             port_id: PortId = PortId('transfer')):
-
-    pkt_send_a = packet_send(c, side_a, side_b, port_id,
-                             a_chan, amount=9999, height_offset=1,key='alice')
+    chains = toml.load(c.config_file)['chains']
+    key0 = chains[0]['key_name']
+    pkt_send_a = packet_send(c,
+                             side_a,
+                             side_b,
+                             port_id,
+                             a_chan,
+                             amount=9999,
+                             height_offset=1,
+                             key=key0)
 
     split()
 
     pkt_timeout_a = packet_timeout(c, side_b, side_a, port_id, a_chan)
-
-    if pkt_send_a.sequence != pkt_timeout_a.sequence:
-        l.error(
-            f'Mismatched sequence numbers for path {side_a} -> {side_b} : Sent={pkt_send_a.sequence} versus Timeout={pkt_timeout_a.sequence}')
+    if pkt_timeout_a is not None:
+        if pkt_send_a.sequence != pkt_timeout_a.sequence:
+            l.error(
+                f'Mismatched sequence numbers for path {side_a} -> {side_b} : Sent={pkt_send_a.sequence} versus Timeout={pkt_timeout_a.sequence}'
+            )
 
     split()
-
-    pkt_send_b = packet_send(c, side_b, side_a, port_id,
-                             b_chan, amount=9999, height_offset=1,key='bob')
+    key1 = chains[1]['key_name']
+    pkt_send_b = packet_send(c,
+                             side_b,
+                             side_a,
+                             port_id,
+                             b_chan,
+                             amount=9999,
+                             height_offset=1,
+                             key=key1)
 
     split()
 
     pkt_timeout_b = packet_timeout(c, side_a, side_b, port_id, b_chan)
-
-    if pkt_send_b.sequence != pkt_timeout_b.sequence:
-        l.error(
-            f'Mismatched sequence numbers for path {side_b} -> {side_a} : Sent={pkt_send_b.sequence} versus Timeout={pkt_timeout_b.sequence}')
+    if pkt_timeout_b is not None:
+        if pkt_send_b.sequence != pkt_timeout_b.sequence:
+            l.error(
+                f'Mismatched sequence numbers for path {side_b} -> {side_a} : Sent={pkt_send_b.sequence} versus Timeout={pkt_timeout_b.sequence}'
+            )
 
     split()
 

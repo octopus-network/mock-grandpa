@@ -157,8 +157,8 @@ def conn_init(c: Config,
     cmd = TxConnInit(dst_chain_id=dst, src_chain_id=src,
                      dst_client_id=dst_client, src_client_id=src_client)
     res = cmd.run(c).success()
-    l.info(
-        f'ConnOpen init submitted to {dst} and obtained connection id {res.connection_id}')
+    # l.info(
+    #     f'ConnOpen init submitted to {dst} and obtained connection id {res.connection_id}')
     return res.connection_id
 
 
@@ -170,8 +170,8 @@ def conn_try(c: Config,
     cmd = TxConnTry(dst_chain_id=dst, src_chain_id=src, dst_client_id=dst_client, src_client_id=src_client,
                     src_conn_id=src_conn)
     res = cmd.run(c).success()
-    l.info(
-        f'ConnOpen try submitted to {dst} and obtained connection id {res.connection_id}')
+    # l.info(
+        # f'ConnOpen try submitted to {dst} and obtained connection id {res.connection_id}')
     return res.connection_id
 
 
@@ -183,8 +183,8 @@ def conn_ack(c: Config,
     cmd = TxConnAck(dst_chain_id=dst, src_chain_id=src, dst_client_id=dst_client, src_client_id=src_client,
                     dst_conn_id=dst_conn, src_conn_id=src_conn)
     res = cmd.run(c).success()
-    l.info(
-        f'ConnOpen ack submitted to {dst} and obtained connection id {res.connection_id}')
+    # l.info(
+        # f'ConnOpen ack submitted to {dst} and obtained connection id {res.connection_id}')
     return res.connection_id
 
 
@@ -196,8 +196,8 @@ def conn_confirm(c: Config,
     cmd = TxConnConfirm(dst_chain_id=dst, src_chain_id=src, dst_client_id=dst_client, src_client_id=src_client,
                         dst_conn_id=dst_conn, src_conn_id=src_conn)
     res = cmd.run(c).success()
-    l.info(
-        f'ConnOpen confirm submitted to {dst} and obtained connection id {res.connection_id}')
+    # l.info(
+        # f'ConnOpen confirm submitted to {dst} and obtained connection id {res.connection_id}')
     return res.connection_id
 
 
@@ -251,7 +251,7 @@ def query_connection_end(c: Config, chain_id: ChainId, conn_id: ConnectionId) ->
     cmd = QueryConnectionEnd(chain_id, conn_id)
     res = cmd.run(c).success()
 
-    l.debug(f'Status of connection end {conn_id}: {res}')
+    # l.debug(f'Status of connection end {conn_id}: {res}')
 
     return res
 

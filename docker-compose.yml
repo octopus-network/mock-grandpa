@@ -18,7 +18,7 @@ services:
       - 26659:26659
       - 6060:6060
       - 8080:8080
-    networks: 
+    networks:
       - cosmos
     #tty: true
     volumes:
@@ -35,16 +35,16 @@ services:
       GOPROXY: "https://goproxy.cn"
 
     ports:
-      - 26557:26557
+      - 26558:26558
       - 1318:1318
       - 4600:4600
       - 9097:9097
       - 9098:9098
       - 12346:12346
-      - 26658:26658
+      - 26670:26670
       - 6061:6061
       - 8081:8081
-    networks: 
+    networks:
       - cosmos
     #tty: true
     volumes:
