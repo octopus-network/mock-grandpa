@@ -2,6 +2,7 @@
 
 import argparse
 import logging as l
+from time import time
 from typing import Tuple
 from pathlib import Path
 import toml
@@ -316,11 +317,16 @@ def main():
     # key1 = chains[1]['key_name']
     port_id = PortId('transfer')
 
+    # count run time
+    start = time()
     # Test for  tx raw subcmd
     # ibc0_client_id, ibc0_conn_id, ibc0_chan_id, ibc1_client_id, ibc1_conn_id, ibc1_chan_id = raw(
     # config, ibc0, ibc1, port_id)
     raw(config, ibc0, ibc1, port_id)
     # TODO: Test for passive mode
+    end = time()
+    time_costing = end - start
+    print('\033[32;1mTime costing:{msg}\033[0m'.format(msg=time_costing))
 
 
 if __name__ == "__main__":

@@ -323,7 +323,7 @@ def ping_pong(c: Config,
             )
 
     split()
-
+    sleep(10)
     key1 = chains[1]['key_name']
     pkt_send_b = packet_send(c,
                              side_b,

@@ -3,7 +3,6 @@ import toml
 
 from .cmd import *
 from .common import *
-
 import e2e.relayer as relayer
 
 
@@ -500,6 +499,7 @@ def handshake(c: Config, side_a: ChainId, side_b: ChainId, conn_a: ConnectionId,
         )
         exit(1)
 
+    sleep(10)
     b_chan_end = query_channel_end(c, side_b, port_id, b_chan_id)
     if b_chan_end.state != 'Open':
         l.error(
