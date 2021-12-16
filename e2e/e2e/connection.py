@@ -243,7 +243,7 @@ def handshake(c: Config, side_a: ChainId, side_b: ChainId, client_a: ClientId,
         )
         exit(1)
 
-    sleep(10)
+    sleep(20)
     b_conn_end = query_connection_end(c, side_b, b_conn_id)
     if b_conn_end.state != 'Open':
         l.error(

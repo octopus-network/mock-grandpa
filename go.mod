@@ -17,8 +17,8 @@ require (
 	github.com/tendermint/spm v0.1.6
 	github.com/tendermint/tendermint v0.34.13
 	github.com/tendermint/tm-db v0.6.4
-	google.golang.org/genproto v0.0.0-20211129164237-f09f9a12af12
-	google.golang.org/grpc v1.42.0
+	google.golang.org/genproto v0.0.0-20211208223120-3a66f561d7aa
+	google.golang.org/grpc v1.43.0
 )
 
 replace (
@@ -28,7 +28,7 @@ replace (
 )
 
 // for dev
-replace github.com/cosmos/ibc-go v1.2.0 => ../ibc-go //v1.2.0
+// replace github.com/cosmos/ibc-go v1.2.0 => ../ibc-go //v1.2.0
 
 // for test
-// replace github.com/cosmos/ibc-go v1.2.0 => github.com/octopus-network/ibc-go v1.2.1-0.20211028233327-fba0a50b3261
+replace github.com/cosmos/ibc-go v1.2.0 => github.com/octopus-network/ibc-go v1.2.1-0.20211126082714-cc9e3e9dc6d1

@@ -128,9 +128,10 @@ def create_update_query_client(c: Config, dst: ChainId,
                                src: ChainId) -> ClientId:
     client = create_client(c, dst, src)
     split()
-    sleep(20)
-    query_client_state(c, dst, client.client_id)
+    # sleep(20)
+    # query_client_state(c, dst, client.client_id)
     split()
+    sleep(10)
     update_client(c, dst, client.client_id)
     split()
     query_client_state(c, dst, client.client_id)
