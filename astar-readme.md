@@ -18,7 +18,8 @@ sudo curl https://get.starport.network/starport | bash
 starport chain serve -f -v -c earth.yml >| earth.log
 ```
 
-### View Chain Data in Explorer
+### View On-Chain Data in Explorer
+* It's recommended to run the explorer to view the on-chain data after the E2E testing finishes. As the Cosmos chain sometimes is not stable when the explorer is running in my testing.
 * Please refer to repo `github.com:forbole/big-dipper.git`
 * Before starting the explorer, set the `remote` property in `setting.json` as below:
 ```json
