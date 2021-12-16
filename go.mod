@@ -5,8 +5,6 @@ go 1.16
 require (
 	github.com/cosmos/cosmos-sdk v0.44.0
 	github.com/cosmos/ibc-go v1.2.0
-	// github.com/octopus-network/ibc-go mock-grandpa
-	// github.com/octopus-network/ibc-go v1.2.1-0.20211023045906-289d4737bd98
 	github.com/gogo/protobuf v1.3.3
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/gorilla/mux v1.8.0
