@@ -42,5 +42,5 @@ BlockHeight = NewType('BlockHeight', str)
 
 
 def split():
-    sleep(0.5)
+    sleep(10)
     print()

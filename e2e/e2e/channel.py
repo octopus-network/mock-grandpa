@@ -434,6 +434,8 @@ def close(
     chan_close_init(c, dst, src, dst_conn, dst_port, src_port, dst_chan,
                     src_chan)
 
+    split()
+
     chan_close_confirm(c, src, dst, src_conn, src_port, dst_port, src_chan,
                        dst_chan)
 
@@ -468,12 +470,13 @@ def handshake(c: Config, side_a: ChainId, side_b: ChainId, conn_a: ConnectionId,
                             dst_conn=conn_a,
                             dst_chan=a_chan_id,
                             src_chan=b_chan_id)
-
     if ack_res != a_chan_id:
         l.error(
             f'Incorrect channel id returned from chan open ack: expected={a_chan_id} got={ack_res}'
         )
         exit(1)
+
+    split()
 
     confirm_res = chan_open_confirm(c,
                                     dst=side_b,
@@ -483,7 +486,6 @@ def handshake(c: Config, side_a: ChainId, side_b: ChainId, conn_a: ConnectionId,
                                     dst_conn=conn_b,
                                     dst_chan=b_chan_id,
                                     src_chan=a_chan_id)
-
     if confirm_res != b_chan_id:
         l.error(
             f'Incorrect channel id returned from chan open confirm: expected={b_chan_id} got={confirm_res}'
@@ -499,7 +501,8 @@ def handshake(c: Config, side_a: ChainId, side_b: ChainId, conn_a: ConnectionId,
         )
         exit(1)
 
-    sleep(10)
+    split()
+
     b_chan_end = query_channel_end(c, side_b, port_id, b_chan_id)
     if b_chan_end.state != 'Open':
         l.error(
@@ -578,11 +581,11 @@ def verify_state(c: Config, ibc1: ChainId, ibc0: ChainId,
     # verify channel state on both chains, should be 'Open' for 'all' strategy, 'Init' otherwise
 
     if strategy == 'all':
-        sleep(10.0)
         for i in range(20):
-            sleep(2.0)
+            split()
             ibc1_chan_end = query_channel_end(c, ibc1, port_id, ibc1_chan_id)
             ibc0_chan_id = ibc1_chan_end.remote.channel_id
+            split()
             ibc0_chan_end = query_channel_end(c, ibc0, port_id, ibc0_chan_id)
             if ibc0_chan_end.state == 'Open' and ibc1_chan_end.state == 'Open':
                 break
@@ -593,7 +596,7 @@ def verify_state(c: Config, ibc1: ChainId, ibc0: ChainId,
                                                      "state is not Open")
 
     elif strategy == 'packets':
-        sleep(5.0)
+        split()
         ibc1_chan_end = query_channel_end(c, ibc1, port_id, ibc1_chan_id)
         assert (ibc1_chan_end.state == 'Init'), (ibc1_chan_end,
                                                  "state is not Init")
@@ -605,13 +608,16 @@ def passive_channel_start_then_init(c: Config, ibc1: ChainId, ibc0: ChainId,
 
     # 1. start hermes
     proc = relayer.start(c)
-    sleep(2.0)
+
+    sleep(120.0)
 
     # 2. create a channel in Init state
     ibc1_chan_id = chan_open_init(c, dst=ibc1, src=ibc0, dst_conn=ibc1_conn_id)
 
     # 3. wait for channel handshake to finish and verify channel state on both chains
     verify_state(c, ibc1, ibc0, ibc1_chan_id, port_id)
+
+    sleep(120)
 
     # 4. All good, stop the relayer
     proc.kill()
@@ -623,13 +629,17 @@ def passive_channel_init_then_start(c: Config, ibc1: ChainId, ibc0: ChainId,
 
     # 1. create a channel in Init state
     ibc1_chan_id = chan_open_init(c, dst=ibc1, src=ibc0, dst_conn=ibc1_conn_id)
-    sleep(2.0)
+    split()
 
     # 2. start relaying
     proc = relayer.start(c)
 
+    sleep(120)
+
     # 3. wait for channel handshake to finish and verify channel state on both chains
     verify_state(c, ibc1, ibc0, ibc1_chan_id, port_id)
+
+    sleep(120)
 
     # 4. All good, stop the relayer
     proc.kill()
@@ -641,7 +651,7 @@ def passive_channel_try_then_start(c: Config, ibc1: ChainId, ibc0: ChainId,
 
     # 1. create a channel in Try state
     ibc1_chan_id = chan_open_init(c, dst=ibc1, src=ibc0, dst_conn=ibc1_conn_id)
-    sleep(2.0)
+    split()
     ibc0_chan_id = chan_open_try(c,
                                  dst=ibc0,
                                  src=ibc1,
@@ -649,13 +659,17 @@ def passive_channel_try_then_start(c: Config, ibc1: ChainId, ibc0: ChainId,
                                  src_port=port_id,
                                  dst_port=port_id,
                                  src_chan=ibc1_chan_id)
-    sleep(2.0)
+    split()
 
     # 2. start relaying
     proc = relayer.start(c)
 
+    sleep(120)
+
     # 3. wait for channel handshake to finish and verify channel state on both chains
     verify_state(c, ibc1, ibc0, ibc1_chan_id, port_id)
+
+    sleep(120)
 
     # 4. All good, stop the relayer
     proc.kill()

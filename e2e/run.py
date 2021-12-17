@@ -35,7 +35,7 @@ def passive_packets(c: Config, ibc0: ChainId, ibc1: ChainId, port_id: PortId,
                        height_offset=1000,
                        number_msgs=3,
                        key=key1)
-
+    sleep(10)
     # hermes tx raw ft-transfer ibc-1 ibc-0 transfer channel-0 10000 1000 -n 4
     packet.packet_send(c,
                        src=ibc0,
@@ -56,26 +56,26 @@ def passive_packets(c: Config, ibc0: ChainId, ibc1: ChainId, port_id: PortId,
                                     chain=ibc1,
                                     port=port_id,
                                     channel=ibc1_channel_id)
-
+    sleep(10)
     # hermes query packet unreceived-acks ibc-1 transfer channel-1
     packet.query_unreceived_acks(c,
                                  chain=ibc1,
                                  port=port_id,
                                  channel=ibc1_channel_id)
-
+    sleep(10)
     # hermes query packet unreceived-packets ibc-0 transfer channel-0
     packet.query_unreceived_packets(c,
                                     chain=ibc0,
                                     port=port_id,
                                     channel=ibc0_channel_id)
-
+    sleep(10)
     # hermes query packet unreceived-acks ibc-0 transfer channel-0
     packet.query_unreceived_acks(c,
                                  chain=ibc0,
                                  port=port_id,
                                  channel=ibc0_channel_id)
 
-    sleep(120.0)
+    sleep(600.0)
     # Stop the relayer
     proc.kill()
 
@@ -151,32 +151,39 @@ def main():
 
     # Create client on ibc0 for ibc1
     ibc0_client_id = client.create_update_query_client(config, ibc0, ibc1)
+
+    split()
+
     # Create client on ibc1 for ibc0
     ibc1_client_id = client.create_update_query_client(config, ibc1, ibc0)
+
+    split()
+
     # Connection handshake and get connection id
     ibc0_conn_id, ibc1_conn_id = connection.handshake(config, ibc0, ibc1,
                                                       ibc0_client_id,
                                                       ibc1_client_id)
     split()
+
     # Channel handshake and get channel id
     ibc0_chan_id, ibc1_chan_id = channel.handshake(config, ibc0, ibc1,
                                                    ibc0_conn_id, ibc1_conn_id,
                                                    port_id)
 
-    # Test for  tx raw mode
-    print('\033[32;1m{msg}\033[0m'.format(
-        msg=".............. Begin to test by raw mode  .............."))
-    sleep(2.0)
-    raw(config, ibc0, ibc1, ibc0_chan_id, ibc1_chan_id, port_id)
-    print('\033[32;1m{msg}\033[0m'.format(
-        msg=".............. Raw mode end .............."))
+    # split()
 
-    print('\n\n')
+    # # Test for  tx raw mode
+    # print('\033[32;1m{msg}\033[0m'.format(
+    #     msg=".............. Begin to test by raw mode  .............."))
+    # raw(config, ibc0, ibc1, ibc0_chan_id, ibc1_chan_id, port_id)
+    # print('\033[32;1m{msg}\033[0m'.format(
+    #     msg=".............. Raw mode end .............."))
+
+    split()
 
     # Test for passive mode
     print('\033[32;1m{msg}\033[0m'.format(
         msg=".............. Begin to test by passive mode  .............."))
-    sleep(2.0)
     passive_packets(config, ibc0, ibc1, port_id, ibc0_chan_id, ibc1_chan_id,
                     key0, key1)
     print('\033[32;1m{msg}\033[0m'.format(

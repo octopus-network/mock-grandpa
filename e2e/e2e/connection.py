@@ -213,9 +213,13 @@ def conn_confirm(c: Config, dst: ChainId, src: ChainId, dst_client: ClientId,
 def handshake(c: Config, side_a: ChainId, side_b: ChainId, client_a: ClientId,
               client_b: ClientId) -> Tuple[ConnectionId, ConnectionId]:
     a_conn_id = conn_init(c, side_a, side_b, client_a, client_b)
+
     split()
+
     b_conn_id = conn_try(c, side_b, side_a, client_b, client_a, a_conn_id)
+
     split()
+
     ack_res = conn_ack(c, side_a, side_b, client_a, client_b, a_conn_id,
                        b_conn_id)
 
@@ -229,13 +233,14 @@ def handshake(c: Config, side_a: ChainId, side_b: ChainId, client_a: ClientId,
 
     confirm_res = conn_confirm(c, side_b, side_a, client_b, client_a, b_conn_id,
                                a_conn_id)
-
     if confirm_res != b_conn_id:
         l.error(
             f'Incorrect connection id returned from conn confirm: expected=({b_conn_id})/got=({confirm_res})'
         )
         exit(1)
-    # sleep(10)
+
+    split()
+
     a_conn_end = query_connection_end(c, side_a, a_conn_id)
     if a_conn_end.state != 'Open':
         l.error(
@@ -243,7 +248,7 @@ def handshake(c: Config, side_a: ChainId, side_b: ChainId, client_a: ClientId,
         )
         exit(1)
 
-    sleep(20)
+    split()
     b_conn_end = query_connection_end(c, side_b, b_conn_id)
     if b_conn_end.state != 'Open':
         l.error(
@@ -282,11 +287,12 @@ def verify_state(c: Config, ibc1: ChainId, ibc0: ChainId,
 
     # verify connection state on both chains, should be 'Open' for 'all' strategy, 'Init' otherwise
     if strategy == 'all':
-        sleep(10.0)
+
         for i in range(20):
-            sleep(5.0)
+            split()
             ibc1_conn_end = query_connection_end(c, ibc1, ibc1_conn_id)
             ibc0_conn_id = ibc1_conn_end.counterparty.connection_id
+            split()
             ibc0_conn_end = query_connection_end(c, ibc0, ibc0_conn_id)
             if ibc0_conn_end.state == 'Open' and ibc1_conn_end.state == 'Open':
                 break
@@ -297,7 +303,7 @@ def verify_state(c: Config, ibc1: ChainId, ibc0: ChainId,
                                                      "state is not Open")
 
     elif strategy == 'packets':
-        sleep(5.0)
+        split()
         ibc1_conn_end = query_connection_end(c, ibc1, ibc1_conn_id)
         assert (ibc1_conn_end.state == 'Init'), (ibc1_conn_end,
                                                  "state is not Init")
@@ -309,7 +315,7 @@ def passive_connection_start_then_init(
 
     # 1. start hermes
     proc = relayer.start(c)
-    sleep(2.0)
+    sleep(120.0)
 
     # 2. create a connection in Init state
     ibc1_conn_id_a = conn_init(c,
@@ -317,9 +323,12 @@ def passive_connection_start_then_init(
                                src=ibc0,
                                dst_client=ibc1_client_id,
                                src_client=ibc0_client_id)
+    split()
 
     # 3. wait for connection handshake to finish and verify connection state on both chains
     verify_state(c, ibc1, ibc0, ibc1_conn_id_a)
+
+    sleep(120)
 
     # 4. All good, stop the relayer
     proc.kill()
@@ -338,12 +347,16 @@ def passive_connection_init_then_start(c: Config, ibc1: ChainId, ibc0: ChainId,
                                dst_client=ibc1_client_id,
                                src_client=ibc0_client_id)
 
+    split()
     # 2. start hermes
     proc = relayer.start(c)
-    sleep(2.0)
+
+    sleep(120)
 
     # 3. wait for connection handshake to finish and verify connection state on both chains
     verify_state(c, ibc1, ibc0, ibc1_conn_id_a)
+
+    sleep(120)
 
     # 4. All good, stop the relayer
     proc.kill()
@@ -360,6 +373,8 @@ def passive_connection_try_then_start(c: Config, ibc1: ChainId, ibc0: ChainId,
                                dst_client=ibc1_client_id,
                                src_client=ibc0_client_id)
 
+    split()
+
     # 2. create a connection in Try-Open state
     ibc0_conn_id_b = conn_try(c,
                               dst=ibc0,
@@ -370,10 +385,13 @@ def passive_connection_try_then_start(c: Config, ibc1: ChainId, ibc0: ChainId,
 
     # 2. start hermes
     proc = relayer.start(c)
-    sleep(2.0)
+
+    sleep(120.0)
 
     # 3. wait for connection handshake to finish and verify connection state on both chains
     verify_state(c, ibc1, ibc0, ibc1_conn_id_a)
+
+    sleep(120)
 
     # 4. All good, stop the relayer
     proc.kill()

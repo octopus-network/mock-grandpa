@@ -323,7 +323,7 @@ def ping_pong(c: Config,
             )
 
     split()
-    sleep(10)
+
     key1 = chains[1]['key_name']
     pkt_send_b = packet_send(c,
                              side_b,
@@ -344,7 +344,7 @@ def ping_pong(c: Config,
             )
 
     split()
-    sleep(20)
+
     pkt_ack_b = packet_ack(c, side_b, side_a, port_id, a_chan)
     if pkt_ack_b is not None:
         if pkt_recv_a.sequence != pkt_ack_b.sequence:
