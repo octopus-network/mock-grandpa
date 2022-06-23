@@ -1,11 +1,11 @@
 accounts:
   - name: alice
-    coins: ["20000000atom", "200000000stake"]
+    coins: ["20000000000000000000000ATOM", "200000000stake"]
     address: "cosmos1xh2jvz9ecty8qdctlgscmys2dr5gz729k0l7x4"
     mnemoic": "picture switch picture soap flip dawn nerve easy rebuild company hawk stand menu rhythm unfold engine rug rally weapon raccoon glide mosquito lion dog"
 
   - name: earth-validator
-    coins: ["10000000atom", "100000000stake"]
+    coins: ["10000000ATOM", "100000000stake"]
 validator:
   name: earth-validator
   staked: "100000000stake"
@@ -16,7 +16,7 @@ client:
     path: "vue/src/store"
 faucet:
   name: earth-validator
-  coins: ["5atom", "100000stake"]
+  coins: ["5ATOM", "100000stake"]
   port: 4500
 
 build:
