@@ -1,0 +1,14 @@
+syntax = "proto3";
+package kepler.kepler;
+
+import "gogoproto/gogo.proto";
+import "kepler/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "kepler/x/kepler/types";
+
+// GenesisState defines the kepler module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}

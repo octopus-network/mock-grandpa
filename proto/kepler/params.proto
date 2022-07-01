@@ -1,0 +1,12 @@
+syntax = "proto3";
+package kepler.kepler;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "kepler/x/kepler/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}

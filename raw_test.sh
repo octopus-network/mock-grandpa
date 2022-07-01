@@ -172,7 +172,7 @@ sleep 8
 echo "########################################################"
 echo "  hermes -c hermes.toml tx raw packet-recv earth kepler22d transfer channel-0"
 echo "########################################################"
- hermes -c hermes.toml tx raw packet-recv earth kepler22d transfer channel-0
+hermes -c hermes.toml tx raw packet-recv earth kepler22d transfer channel-0
 sleep 5
 echo "########################################################"
 echo "hermes -c hermes.toml tx raw packet-ack kepler22d earth  transfer channel-0"
@@ -188,7 +188,7 @@ sleep 8
 echo "########################################################"
 echo "  hermes -c hermes.toml tx raw packet-recv earth kepler22d transfer channel-0"
 echo "########################################################"
- hermes -c hermes.toml tx raw packet-recv earth kepler22d transfer channel-0
+hermes -c hermes.toml tx raw packet-recv earth kepler22d transfer channel-0
 sleep 5
 echo "########################################################"
 echo "hermes -c hermes.toml tx raw packet-ack kepler22d earth transfer channel-0 "
@@ -204,7 +204,7 @@ sleep 8
 # echo "########################################################"
 # echo " hermes -c hermes.toml tx raw packet-recv kepler22d earth transfer channel-0"
 # echo "########################################################"
-#  hermes -c hermes.toml tx raw packet-recv kepler22d earth transfer channel-0
+# hermes -c hermes.toml tx raw packet-recv kepler22d earth transfer channel-0
 # sleep 5
 # echo "########################################################"
 # echo "hermes -c hermes.toml tx raw packet-ack earth kepler22d transfer channel-0"
